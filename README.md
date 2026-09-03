@@ -41,6 +41,7 @@ Un almacén chico necesita vender online sin pagar un desarrollo a medida ni un 
 - Carrito persistente (localStorage) con stepper de cantidades.
 - Checkout sin login: pide nombre, teléfono, dirección y nota, y arma un mensaje de WhatsApp con el detalle del pedido, el total y el alias para transferir — negrita incluida.
 - El total nunca lo calcula el navegador: lo recalcula un trigger en la base de datos a partir de los productos y cantidades, así nadie puede mandar un total inventado.
+- **Asistente de compras con IA** (Gemini): le preguntás qué tenés en texto libre ("tenés frutillas?") y responde con precio y stock real; si no hay un producto, recomienda alternativas parecidas y va agregando todo al carrito a medida que confirmás.
 
 **Panel `/admin`** (login con Supabase Auth)
 - **Dashboard**: facturación, ticket promedio, clientes, stock restante y stock bajo, con filtro de fecha (último día / semana / mes / año / rango personalizado).
@@ -57,6 +58,7 @@ Un almacén chico necesita vender online sin pagar un desarrollo a medida ni un 
 | Frontend | HTML, CSS y JavaScript sin build ni frameworks — sin `npm install` para correrlo |
 | Backend | [Supabase](https://supabase.com) — Postgres, Auth y Realtime (plan gratis) |
 | Gráficos | [Chart.js](https://www.chartjs.org/) |
+| Asistente / IA | [Gemini API](https://ai.google.dev/) detrás de una función serverless en `api/chat.js`, así la API key nunca queda expuesta en el navegador |
 | Seguridad | Row Level Security de Postgres: cualquiera lee productos y crea pedidos; solo el admin lee/edita pedidos y edita productos |
 | Hosting | [Vercel](https://vercel.com) — deploy automático desde este repo, sin build command |
 
@@ -64,6 +66,7 @@ Un almacén chico necesita vender online sin pagar un desarrollo a medida ni un 
 
 1. **No hay servidor propio.** El sitio son archivos estáticos que hablan directo con Supabase desde el navegador con la `anon key` (pensada para ser pública). La seguridad no depende de esconder esa clave, sino de las políticas RLS de `supabase/schema.sql`.
 2. **Todo lo sensible pasa por la base de datos, no por el cliente.** El total de un pedido lo calcula un trigger en Postgres; crear un pedido no requiere login pero leerlo o cambiarlo sí; y una función `security definer` (`add_order_rpc.sql`) es la que permite que el checkout público confirme el pedido sin poder leer los de otros clientes.
+3. **La única pieza que no es 100% estática es el chat.** `api/chat.js` es una función serverless de Vercel: recibe el mensaje del cliente, lee el catálogo real de Supabase, y recién ahí llama a Gemini con la `GEMINI_API_KEY` guardada como variable de entorno en Vercel — esa clave nunca llega al navegador. Antes de tocar el carrito, valida cada producto que devuelve la IA contra el catálogo real (nunca confía a ciegas en lo que responde el modelo).
 
 ## Instalación y despliegue propio
 
@@ -92,15 +95,32 @@ window.PAYMENT_ALIAS = 'tu.alias.mp';
 window.STORE_NAME = 'Nateco';
 ```
 
-### 4. Probarlo local
+### 4. Activar el asistente de compras (opcional)
+
+1. Sacá una API key gratis de Gemini en [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (cuenta de Google, sin tarjeta).
+2. En tu proyecto de **Vercel → Settings → Environment Variables**, agregá `GEMINI_API_KEY` con esa clave. No va en ningún archivo del repo — la lee `api/chat.js` desde el entorno, así nunca queda expuesta en el navegador.
+3. Cada vez que la agregues o la cambies tenés que volver a desplegar (Vercel → Deployments → ⋯ → Redeploy) para que la función la tome.
+
+Si no configurás la key, el resto del sitio funciona igual — el botón del asistente simplemente va a avisar que todavía no está listo.
+
+### 5. Probarlo local
+
+Para la tienda sola alcanza con:
 
 ```bash
 npx serve .
 ```
 
-### 5. Publicarlo gratis
+Para probar también el asistente (usa una función serverless en `api/`) hace falta la Vercel CLI, que simula ese entorno:
 
-Sin build ni dependencias — se sube la carpeta tal cual. Este repo ya está conectado a **Vercel** (`vercel` CLI, o importar el repo desde vercel.com); Netlify y Cloudflare Pages funcionan igual de bien.
+```bash
+npm i -g vercel
+vercel dev
+```
+
+### 6. Publicarlo gratis
+
+Sin build ni dependencias — se sube la carpeta tal cual. Este repo ya está conectado a **Vercel** (`vercel` CLI, o importar el repo desde vercel.com); el `api/chat.js` se despliega solo como función serverless, no hace falta configurar nada aparte de la variable de entorno del paso 4.
 
 </details>
 
@@ -108,6 +128,8 @@ Sin build ni dependencias — se sube la carpeta tal cual. Este repo ya está co
 
 ```
 index.html, css/, js/            → tienda (habla directo con Supabase)
+js/chat.js                       → widget del asistente de compras
+api/chat.js                      → función serverless: catálogo + Gemini, con la API key a salvo
 admin/                           → panel /admin (login, dashboard, CRM)
 images/products/                 → foto real de cada producto (255 fotos)
 docs/screenshots/                → capturas usadas en este README

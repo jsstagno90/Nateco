@@ -345,6 +345,29 @@
     }, 150);
   });
 
+  // ------------------------------------------------------- chatbot hook --
+  // Interfaz mínima para que js/chat.js (el widget del asistente) pueda
+  // leer el catálogo/carrito y agregar productos sin tocar el estado
+  // interno directamente.
+  window.NatecoStore = {
+    getProducts: function () { return state.products.slice(); },
+    getCartItems: function () { return cartItems(); },
+    getCartTotal: function () { return cartTotal(); },
+    addToCart: function (id, qty) {
+      var current = state.cart[id] || 0;
+      setQty(id, current + qty);
+    },
+    onChange: function (fn) {
+      chatListeners.push(fn);
+    }
+  };
+  var chatListeners = [];
+  var _renderAll = renderAll;
+  renderAll = function () {
+    _renderAll();
+    chatListeners.forEach(function (fn) { fn(); });
+  };
+
   // -------------------------------------------------------------- init ----
   loadCart();
   loadProducts().then(renderAll).catch(function (err) {

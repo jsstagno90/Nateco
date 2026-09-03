@@ -195,8 +195,32 @@
   </div>
 </div>
 
+
+<!-- ----------------------------------------------------------- chatbot -->
+<button class="chat-fab" id="chatFab" aria-label="Abrir asistente">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 8.6 8.6 0 0 1-3.2-.6L3 21l1.8-5.4A8.4 8.4 0 0 1 21 11.5Z"/></svg>
+</button>
+
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div>
+      <h3>Asistente Nateco</h3>
+      <p>Preguntame qué tenemos — te arma el pedido</p>
+    </div>
+    <button class="chat-close" id="chatClose" aria-label="Cerrar">&times;</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <form class="chat-input-row" id="chatForm">
+    <input type="text" id="chatInput" placeholder="Tenés frutillas?" autocomplete="off">
+    <button type="submit" class="chat-send" aria-label="Enviar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+    </button>
+  </form>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/js/supabase-config.js"></script>
 <script src="/js/store.js"></script>
+<script src="/js/chat.js"></script>
 </body>
 </html>
