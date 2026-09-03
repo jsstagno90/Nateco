@@ -3,10 +3,9 @@
 -- Corré todo este archivo una sola vez en: Supabase → SQL Editor → New query
 -- =============================================================================
 
--- Antes de correrlo, reemplazá 'admin@nateco.com' (aparece dos veces más abajo,
--- en las políticas "..._admin_...") por el email real que vas a usar para
--- entrar a /admin. Ese email es el ÚNICO que va a poder editar productos y
--- ver/gestionar pedidos, sin importar quién más se registre.
+-- El email admin ya está seteado a nateco@nateco.com (el que usás para entrar
+-- a /admin) en las 5 políticas "..._admin_..." de abajo. Ese email es el
+-- ÚNICO que va a poder editar productos y ver/gestionar pedidos.
 
 -- ---------------------------------------------------------------------------
 -- Productos
@@ -78,13 +77,13 @@ create policy products_public_read on products
   for select using (true);
 
 create policy products_admin_insert on products
-  for insert with check (auth.jwt() ->> 'email' = 'admin@nateco.com');
+  for insert with check (auth.jwt() ->> 'email' = 'nateco@nateco.com');
 
 create policy products_admin_update on products
-  for update using (auth.jwt() ->> 'email' = 'admin@nateco.com');
+  for update using (auth.jwt() ->> 'email' = 'nateco@nateco.com');
 
 create policy products_admin_delete on products
-  for delete using (auth.jwt() ->> 'email' = 'admin@nateco.com');
+  for delete using (auth.jwt() ->> 'email' = 'nateco@nateco.com');
 
 drop policy if exists orders_public_insert on orders;
 drop policy if exists orders_admin_select  on orders;
@@ -94,10 +93,10 @@ create policy orders_public_insert on orders
   for insert with check (true);
 
 create policy orders_admin_select on orders
-  for select using (auth.jwt() ->> 'email' = 'admin@nateco.com');
+  for select using (auth.jwt() ->> 'email' = 'nateco@nateco.com');
 
 create policy orders_admin_update on orders
-  for update using (auth.jwt() ->> 'email' = 'admin@nateco.com');
+  for update using (auth.jwt() ->> 'email' = 'nateco@nateco.com');
 
 -- Pedidos en vivo en el panel /admin sin recargar la página.
 alter publication supabase_realtime add table orders;

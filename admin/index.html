@@ -57,9 +57,56 @@
 
     <section class="panel active" id="panel-resumen">
       <div class="admin-head">
-        <div><h1>Resumen</h1><p>Estado general del negocio.</p></div>
+        <div><h1>Dashboard</h1><p>Estado general del negocio, en vivo.</p></div>
+        <div class="date-filter">
+          <select id="dateRangeSelect" class="status-select">
+            <option value="today">Último día</option>
+            <option value="week">Última semana</option>
+            <option value="month" selected>Último mes</option>
+            <option value="year">Último año</option>
+            <option value="custom">Rango personalizado</option>
+          </select>
+          <span class="date-custom" id="dateCustomRange" hidden>
+            <input type="date" id="dateFrom" class="date-input">
+            <span>a</span>
+            <input type="date" id="dateTo" class="date-input">
+          </span>
+        </div>
       </div>
       <div class="stat-row" id="statRow"></div>
+
+      <div class="chart-grid">
+        <div class="chart-card chart-wide">
+          <div class="chart-head"><h2>Ventas por día</h2><span class="chart-sub" id="salesChartSub">Último mes</span></div>
+          <div class="chart-body"><canvas id="salesChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><h2>Pedidos por estado</h2></div>
+          <div class="chart-body"><canvas id="statusChart"></canvas></div>
+        </div>
+        <div class="chart-card chart-wide">
+          <div class="chart-head"><h2>Top 10 más vendidos</h2><span class="chart-sub">Por unidades</span></div>
+          <div class="chart-body"><canvas id="topProductsChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="admin-head">
+        <div><h1 style="font-size:1.15rem;">Ranking de productos</h1><p>Vendidos, ingresos y stock restante de cada producto.</p></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <input type="search" id="rankingSearch" class="search-input" placeholder="Buscar producto o categoría...">
+          <select id="rankingSort" class="status-select">
+            <option value="sold_desc">Más vendidos</option>
+            <option value="sold_asc">Menos vendidos</option>
+            <option value="stock_asc">Stock más bajo</option>
+            <option value="revenue_desc">Mayor ingreso</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-card table-wrap"><table>
+        <thead><tr><th>Producto</th><th>Categoría</th><th>Vendidos</th><th>Ingresos</th><th>Stock restante</th></tr></thead>
+        <tbody id="rankingBody"></tbody>
+      </table></div>
+
       <div class="admin-head"><h1 style="font-size:1.15rem;">Últimos pedidos</h1></div>
       <div class="table-card table-wrap"><table>
         <thead><tr><th>Pedido</th><th>Cliente</th><th>Total</th><th>Estado</th><th>Fecha</th></tr></thead>
@@ -97,7 +144,8 @@
 
     <section class="panel" id="panel-productos">
       <div class="admin-head">
-        <div><h1>Productos</h1><p>Se actualizan al instante en la tienda online.</p></div>
+        <div><h1>Productos</h1><p>Se actualizan al instante en la tienda online. Tocá cualquier campo para editarlo.</p></div>
+        <input type="search" id="productSearch" class="search-input" placeholder="Buscar por nombre o código...">
       </div>
 
       <form class="prod-form" id="newProductForm">
@@ -126,11 +174,12 @@
         </div>
         <div class="field"><label>Unidad</label><input type="text" id="npUnit" placeholder="Ej: 200g"></div>
         <div class="field"><label>Precio</label><input type="number" id="npPrice" min="0" required placeholder="0"></div>
+        <div class="field"><label>Cantidad</label><input type="number" id="npStockQty" min="0" value="100" placeholder="100"></div>
         <button class="btn-primary" type="submit" style="padding:10px 14px;">Agregar</button>
       </form>
 
       <div class="table-card table-wrap"><table>
-        <thead><tr><th>Producto</th><th>Categoría</th><th>Unidad</th><th>Precio</th><th>Stock</th><th>Destacado</th><th></th></tr></thead>
+        <thead><tr><th>Código</th><th>Producto</th><th>Categoría</th><th>Unidad</th><th>Precio</th><th>Cantidad</th><th>Stock</th><th>Destacado</th><th></th></tr></thead>
         <tbody id="productsBody"></tbody>
       </table></div>
     </section>
@@ -139,6 +188,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
 <script src="/js/supabase-config.js"></script>
 <script src="/admin/js/admin.js"></script>
 </body>

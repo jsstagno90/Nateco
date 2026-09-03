@@ -246,10 +246,18 @@
     btn.disabled = true;
     btn.textContent = 'Enviando...';
 
-    sb.from('orders').insert(row).select().single()
+    sb.rpc('create_order', {
+      p_items: row.items,
+      p_customer_name: row.customer_name,
+      p_customer_phone: row.customer_phone,
+      p_customer_address: row.customer_address,
+      p_customer_note: row.customer_note
+    })
       .then(function (res) {
         if (res.error) throw res.error;
-        sendToWhatsApp(res.data);
+        var result = res.data && res.data[0];
+        if (!result) throw new Error('sin resultado');
+        sendToWhatsApp(Object.assign({}, row, result));
         state.cart = {};
         saveCart();
         renderAll();
@@ -279,6 +287,11 @@
     });
     lines.push('');
     lines.push('Total: ' + money(order.total));
+    lines.push('');
+    lines.push('Para confirmar tu pedido, transferí el total a:');
+    lines.push('Alias: ' + window.PAYMENT_ALIAS);
+    lines.push('');
+    lines.push('Cuando se acredite el pago, tu pedido queda confirmado. ¡Gracias por tu compra!');
     lines.push('');
     lines.push('Cliente: ' + order.customer_name);
     lines.push('Tel: ' + order.customer_phone);
