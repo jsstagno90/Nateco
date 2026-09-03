@@ -12,6 +12,6 @@ window.WHATSAPP_NUMBER = '542914680689';
 
 // Alias (o CBU/CVU) al que los clientes tienen que transferir para confirmar
 // el pedido. Aparece en el mensaje de WhatsApp que se arma automáticamente.
-window.PAYMENT_ALIAS = 'permitidos.bahia';
+window.PAYMENT_ALIAS = 'xxxxxxx.prueba.alias';
 
 window.STORE_NAME = 'Nateco';
