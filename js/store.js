@@ -86,13 +86,17 @@
   };
 
   function visibleProducts() {
+    // La búsqueda siempre mira TODO el catálogo, sin importar qué
+    // categoría esté seleccionada (si no, buscar "frutilla" estando en
+    // "Cosmética" no encontraba nada aunque el producto existiera en
+    // "Frutas Congeladas").
+    if (state.search.trim()) {
+      var q = state.search.trim().toLowerCase();
+      return state.products.filter(function (p) { return p.name.toLowerCase().indexOf(q) !== -1; });
+    }
     var list = state.products;
     if (state.category === 'all') list = list.filter(function (p) { return p.featured; });
     else list = list.filter(function (p) { return p.category === state.category; });
-    if (state.search.trim()) {
-      var q = state.search.trim().toLowerCase();
-      list = list.filter(function (p) { return p.name.toLowerCase().indexOf(q) !== -1; });
-    }
     return list;
   }
 
