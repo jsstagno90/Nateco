@@ -23,10 +23,7 @@ Tienda online + panel de administración para un almacén natural de San Carlos 
     <td width="50%"><img src="docs/screenshots/categoria-frutos-secos.jpg" alt="Categoría Frutos Secos"><br><sub align="center">Catálogo por categoría, con foto real de cada producto</sub></td>
     <td width="50%"><img src="docs/screenshots/categoria-infusiones.jpg" alt="Categoría Infusiones y Bebidas"><br><sub>18 rubros, buscador que cruza todo el catálogo</sub></td>
   </tr>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/carrito-whatsapp.jpg" alt="Carrito y checkout por WhatsApp"><br><sub>Carrito → WhatsApp con el pedido y el alias de pago ya redactados</sub></td>
-    <td width="50%"><img src="docs/screenshots/mobile.jpg" alt="Vista mobile"><br><sub>100% responsive</sub></td>
-  </tr>
+
 </table>
 
 ## Qué resuelve
