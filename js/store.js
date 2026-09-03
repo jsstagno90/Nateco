@@ -286,10 +286,10 @@
       lines.push('• ' + it.name + '  x' + it.qty + '  —  ' + money(it.price * it.qty));
     });
     lines.push('');
-    lines.push('Total: ' + money(order.total));
+    lines.push('Total: *' + money(order.total) + '*');
     lines.push('');
     lines.push('Para confirmar tu pedido, transferí el total a:');
-    lines.push('Alias: ' + window.PAYMENT_ALIAS);
+    lines.push('Alias: *' + window.PAYMENT_ALIAS + '*');
     lines.push('');
     lines.push('Cuando se acredite el pago, tu pedido queda confirmado. ¡Gracias por tu compra!');
     lines.push('');
