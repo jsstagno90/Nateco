@@ -43,6 +43,38 @@ var CATEGORY_NAMES = {
   'ofertas': 'Ofertas'
 };
 
+// Info general del negocio (ubicación, horarios, envíos, pagos) que nos
+// pasó el equipo de Nateco. Cuando la lista de zonas de envío aparecía
+// duplicada con horarios distintos en el documento original, se usó la
+// PRIMERA versión que figuraba ahí — falta confirmar con Nateco cuál es
+// la correcta.
+var NATECO_INFO = [
+  'UBICACIÓN: Esandi 57, Bariloche (zona ñireco). Puerta negra que dice "Tocar la puerta".',
+  '',
+  'HORARIO DE ATENCIÓN DEL LOCAL: Lunes, Martes y Jueves de 9:30 a 17:30hs. Miércoles y Viernes de 9:30 a 13:00hs.',
+  '',
+  'CÓMO TRABAJAN: los pedidos se toman únicamente desde esta tienda online. Después, según lo que haya elegido el cliente, se envía a domicilio o se coordina retiro en el local (take away). Toman pedidos hasta las 18hs del día anterior a la entrega, o hasta cubrir la capacidad de ese día.',
+  '',
+  'ENVÍOS A DOMICILIO (miércoles y viernes por la tarde):',
+  '- Centro: miércoles 12–15hs, viernes 12–15hs',
+  '- KM 1 al 8: miércoles 14–18hs, viernes 13–15hs',
+  '- Zona Este, Las Victorias y alrededores: miércoles 12–14hs',
+  '- KM 8 al 16: viernes 13–16hs',
+  '- Los Coihues, Villa Lago Gutiérrez, El Alto: viernes 15–18hs',
+  'Pedido mínimo para envío SIN CARGO: $30.000. Por debajo de ese monto, el envío cuesta $3.000. Si el cliente quiere sumar productos a un pedido ya hecho para llegar al envío gratis, puede hacer un pedido nuevo y desde Nateco suman ambos.',
+  '',
+  'RETIRO EN EL LOCAL (take away): una vez hecho el pedido, se coordina día y horario aproximado de retiro, dentro del horario de atención del local (Esandi 57).',
+  '',
+  'MEDIOS DE PAGO: efectivo (en el local o contra entrega) y transferencia bancaria / Mercado Pago.',
+  '',
+  'DESCUENTOS:',
+  '- Socios de SportClub: 10% de descuento pagando en efectivo. No es automático: el cliente tiene que mandar una captura de su credencial vigente (con la fecha de vigencia visible) para que el equipo lo valide. No acumulable con otras promociones.',
+  '- Pago en efectivo en general: 5% de descuento, se coordina junto con el pago del pedido.',
+  'Si te preguntan por estos descuentos, explicalos tal cual, pero NO digas que el sitio los calcula solo en el carrito — hoy se coordinan con el equipo al confirmar el pago, no son automáticos.',
+  '',
+  'COMUNIDAD: si el cliente agenda el número de WhatsApp de Nateco como contacto, recibe una vez por semana un mensaje con productos nuevos, ofertas y promos. También tienen canal de novedades en Instagram.'
+].join('\n');
+
 var RESPONSE_SCHEMA = {
   type: 'object',
   properties: {
@@ -93,6 +125,9 @@ function buildSystemPrompt(catalogText, cartText) {
     'Sos el asistente de compras de Nateco, un almacén natural de San Carlos de Bariloche que vende por WhatsApp y por esta tienda online.',
     'Hablás como alguien atendiendo el local: cercano, con "vos", respuestas cortas (2 a 4 líneas como mucho), sin emojis de más.',
     '',
+    'INFORMACIÓN GENERAL DEL NEGOCIO (ubicación, horarios, envíos, retiro, pagos, descuentos, comunidad):',
+    NATECO_INFO,
+    '',
     'CATÁLOGO ACTUAL (id | nombre | presentación | categoría | precio | stock disponible):',
     catalogText,
     '',
@@ -106,7 +141,9 @@ function buildSystemPrompt(catalogText, cartText) {
     '4. Si el cliente confirma una sugerencia ("dale, esa", "sí, agregá 2"), ahí sí va en cart_actions.',
     '5. Podés agregar varios productos a la vez si el cliente lo pide en un solo mensaje.',
     '6. Si preguntan qué tienen en el carrito o el total, respondé con lo que ves en "CARRITO ACTUAL DEL CLIENTE" (no hace falta que uses cart_actions para eso).',
-    '7. Respondé siempre en el JSON pedido, nada de texto afuera del JSON.'
+    '7. Además de vender productos, también respondés preguntas generales del negocio usando la sección "INFORMACIÓN GENERAL DEL NEGOCIO": dónde queda el local, horarios de atención, zonas y horarios de envío, pedido mínimo, cómo coordinar retiro en el local, medios de pago, descuentos disponibles y la difusión semanal por WhatsApp/Instagram. Usá SOLO lo que dice esa sección, no inventes horarios ni condiciones que no estén ahí.',
+    '8. Cuando corresponda, respondé la parte de FAQ y aprovechá para invitar a mirar el catálogo o segir con la compra (por ejemplo, después de explicar el envío, preguntá si quiere que le arme el pedido), pero sin forzarlo si la pregunta era puramente informativa.',
+    '9. Respondé siempre en el JSON pedido, nada de texto afuera del JSON.'
   ].join('\n');
 }
 
